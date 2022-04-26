@@ -1,27 +1,56 @@
 <template>
-  <div class="game">
-    <span class="round" v-on:click="isClicked" v-on:click.alt="bonus"></span>
+  <div class="game" v-on:click="interfaceClicked">
+    <span
+      class="round"
+      ref="round"
+      v-on:click.stop="isClicked"
+      v-on:click.alt.stop="bonus"
+    ></span>
   </div>
 </template>
 
 <script>
 export default {
   name: "game",
+  data: function() {
+    return { click: 0 };
+  },
   created: function() {
     document.onkeydown = this.start;
   },
+  watch: {
+    click: function() {
+      this.updateRound();
+    }
+  },
   methods: {
     isClicked: function(event) {
-      console.log("click");
+      this.click++;
     },
     bonus: function(event) {
+      this.click++;
       console.log("bonus");
       console.log(event);
+    },
+    interfaceClicked: function(event) {
+      this.click++;
     },
     start: function(event) {
       if (event.key === "Enter") {
         console.log("start");
       }
+    },
+    updateRound: function() {
+      let element = this.$refs.round;
+
+      let size = Math.random() * (100 - 10) + 10;
+      let top = Math.random() * (60 - 5) + 5;
+      let left = Math.random() * (60 - 5) + 5;
+
+      element.style.height = `${size}px`;
+      element.style.width = `${size}px`;
+
+      element.style.margin = `${top}% ${left}%`;
     }
   }
 };
