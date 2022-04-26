@@ -1,10 +1,11 @@
 <template>
-  <div class="game" v-on:click="interfaceClicked">
+  <div class="game" @click="clickOnInterface">
     <span
       class="round"
-      ref="round"
-      v-on:click.stop="isClicked"
-      v-on:click.alt.stop="bonus"
+      :style="roundStyle"
+      :class="{ bonus: bonusActivated, badColor: badColorActivated }"
+      @click.stop="clickOnRound"
+      @click.alt.stop="bonus"
     ></span>
   </div>
 </template>
@@ -13,7 +14,16 @@
 export default {
   name: "game",
   data: function() {
-    return { click: 0 };
+    return {
+      click: 0,
+      roundStyle: {
+        height: "50px",
+        width: "50px",
+        margin: "20% 20%"
+      },
+      bonusActivated: false,
+      badColorActivated: false
+    };
   },
   created: function() {
     document.onkeydown = this.start;
@@ -24,33 +34,35 @@ export default {
     }
   },
   methods: {
-    isClicked: function(event) {
+    clickOnRound: function(event) {
       this.click++;
     },
     bonus: function(event) {
-      this.click++;
-      console.log("bonus");
-      console.log(event);
+      if (this.bonusActivated) {
+        console.log("PERFECT");
+      } else {
+        console.log("Wtf man !");
+      }
     },
-    interfaceClicked: function(event) {
+    clickOnInterface: function(event) {
       this.click++;
+      console.log("INTERFACE");
     },
     start: function(event) {
       if (event.key === "Enter") {
-        console.log("start");
+        console.log("START");
       }
     },
     updateRound: function() {
-      let element = this.$refs.round;
-
       let size = Math.random() * (100 - 10) + 10;
       let top = Math.random() * (60 - 5) + 5;
       let left = Math.random() * (60 - 5) + 5;
 
-      element.style.height = `${size}px`;
-      element.style.width = `${size}px`;
+      this.badColorActivated = size < 20;
+      this.bonusActivated = size > 80;
 
-      element.style.margin = `${top}% ${left}%`;
+      this.roundStyle.height = this.roundStyle.width = `${size}px`;
+      this.roundStyle.margin = `${top}% ${left}%`;
     }
   }
 };
@@ -59,17 +71,22 @@ export default {
 <style scoped>
 .game {
   width: 100%;
-  height: 50%;
+  height: 100%;
   display: block;
-  background: rgb(93, 93, 93);
+  background: #6d6b6b;
 }
 
 .round {
-  height: 50px;
-  width: 50px;
-  background: rgb(225, 225, 225);
+  background: aliceblue;
   border-radius: 9999px;
   position: absolute;
-  margin: 20% 20%;
+}
+
+.bonus {
+  background: indianred;
+}
+
+.badColor {
+  background: #7d7d7d;
 }
 </style>
