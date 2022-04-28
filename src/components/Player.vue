@@ -32,6 +32,7 @@ export default {
       }
 
       this.player = playerName
+      this.$emit('player')
     }
   }
 }
